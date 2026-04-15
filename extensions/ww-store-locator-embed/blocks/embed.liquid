@@ -1,0 +1,42 @@
+{% comment %}
+  WW Store Locator — App Embed Block
+
+  Reads global settings + locations from AppInstallation metafields written
+  by the admin app. Exposes them as window.WWStoreLocator so the client-side
+  engine (store-locator.js) can render the map widget anywhere on the page.
+
+  The widget itself only renders inside an element with class `ww-store-locator`.
+  Merchants add one of these to a page in the theme editor by pasting this
+  snippet into any Custom liquid section or a rich text block:
+
+      <div class="ww-store-locator"></div>
+
+  That gives merchants full placement freedom while still having the config,
+  map script, and engine auto-loaded by this app embed.
+{% endcomment %}
+
+{% assign config_raw = app.metafields.ww_store_locator.config %}
+{% assign config = config_raw.value %}
+{% assign locations_raw = app.metafields.ww_store_locator.locations %}
+{% assign locations = locations_raw.value %}
+
+{% if config != blank %}
+<script>
+  window.WWStoreLocator = {
+    config: {{ config | json }},
+    locations: {{ locations | json }},
+    shop: {{ shop.permanent_domain | json }},
+    currency: {{ shop.currency | json }}
+  };
+</script>
+{{ 'store-locator.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'store-locator.js' | asset_url }}" defer="defer"></script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Store Locator Map",
+  "target": "body",
+  "settings": []
+}
+{% endschema %}

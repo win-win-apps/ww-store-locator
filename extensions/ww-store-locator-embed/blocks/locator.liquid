@@ -1,0 +1,22 @@
+{% comment %}
+  WW Store Locator — App Block
+
+  Drop this on any page (home, contact, custom "Find a store" page) in the
+  theme editor. It renders an empty mount div that the store-locator.js
+  engine loaded by the app embed will fill in with the map widget.
+{% endcomment %}
+
+<div class="ww-store-locator" data-block-id="{{ block.id }}"></div>
+
+{% schema %}
+{
+  "name": "Store Locator Map",
+  "target": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Make sure the Store Locator Map app embed is enabled in the theme editor under App embeds. This block just tells the app where to render the map."
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,113 @@
+// This is your Prisma schema file.
+// See https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["winwin_store_locator"]
+}
+
+model Session {
+  id                  String    @id
+  shop                String    @unique
+  state               String
+  isOnline            Boolean   @default(false)
+  scope               String?
+  expires             DateTime?
+  accessToken         String
+  userId              Int?
+  firstName           String?
+  lastName            String?
+  email               String?
+  accountOwner        Boolean   @default(false)
+  locale              String?
+  collaborator        Boolean?  @default(false)
+  emailVerified       Boolean?  @default(false)
+  refreshToken        String?
+  refreshTokenExpires DateTime?
+
+  @@schema("winwin_store_locator")
+}
+
+model Location {
+  id          String   @id @default(cuid())
+  shop        String
+  isActive    Boolean  @default(true)
+  priority    Int      @default(0)
+
+  // Identity
+  name        String
+  description String?
+
+  // Address
+  addressLine1 String
+  addressLine2 String?
+  city         String
+  region       String?
+  postalCode   String?
+  country      String   @default("United States")
+
+  // Geocoded
+  lat          Float?
+  lng          Float?
+  geocodeError String?
+
+  // Contact
+  phone       String?
+  email       String?
+  website     String?
+
+  // Hours — JSON: { mon: { open: "09:00", close: "17:00", closed: false }, ... }
+  hours       String   @default("{}")
+
+  // Service tags, e.g. ["warranty", "service-center"]
+  tags        String   @default("[]")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([shop])
+  @@schema("winwin_store_locator")
+}
+
+// Global locator settings, one row per shop.
+model LocatorSettings {
+  shop             String   @id
+
+  pageTitle        String   @default("Find a Store")
+  introText        String?
+
+  // Map defaults
+  mapStyle         String   @default("standard") // standard | silver | dark | retro
+  defaultZoom      Int      @default(4)
+  defaultLat       Float    @default(39.5)
+  defaultLng       Float    @default(-98.35)
+  radiusUnit       String   @default("mi")       // mi | km
+  defaultRadius    Int      @default(25)
+
+  // Feature toggles
+  showDirections   Boolean  @default(true)
+  showPhone        Boolean  @default(true)
+  showHours        Boolean  @default(true)
+  showSearchBar    Boolean  @default(true)
+  showRadiusFilter Boolean  @default(true)
+  showTagFilter    Boolean  @default(true)
+
+  // Branding
+  primaryColor     String   @default("#1f2937")
+  pinColor         String   @default("#e53935")
+
+  // Merchant-provided Google Maps API key (BYO).
+  googleMapsApiKey String?
+
+  plan             String   @default("free")   // free | pro | premium
+
+  updatedAt        DateTime @updatedAt
+
+  @@schema("winwin_store_locator")
+}
