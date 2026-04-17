@@ -1,12 +1,10 @@
-# Dev toml — created locally. Client ID is a placeholder until `shopify app init`
-# or `shopify app config link` has been run against the Win-Win Partner org to
-# register this app. See FRESH.md for first-boot steps.
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "PLACEHOLDER_REGISTER_VIA_CLI"
-name = "Store Locator: Google Maps (Dev)"
-handle = "ww-store-locator-dev"
-application_url = "https://localhost:3463"
+client_id = "12955b898047a449c234696e02f34aea"
+name = "Store Locator by Win-Win Apps"
+application_url = "https://example.com"
 embedded = true
+handle = "ww-store-locator-dev"
 
 [build]
 automatically_update_urls_on_dev = true
@@ -15,22 +13,16 @@ automatically_update_urls_on_dev = true
 api_version = "2026-07"
 
   [[webhooks.subscriptions]]
-  topics = ["app/uninstalled"]
+  topics = [ "app/uninstalled" ]
   uri = "/webhooks/app/uninstalled"
 
   [[webhooks.subscriptions]]
-  topics = ["app/scopes_update"]
+  topics = [ "app/scopes_update" ]
   uri = "/webhooks/app/scopes_update"
 
 [access_scopes]
-# Locator only needs a tiny surface: it does no product reads at runtime,
-# but we keep read_themes/write_themes so we can do the embed-status check
-# and deep-link into the theme editor from the admin UI.
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
 scopes = "read_themes,write_themes"
 
 [auth]
-redirect_urls = [
-  "https://localhost:3463/auth/callback",
-  "https://localhost:3463/auth/shopify/callback",
-  "https://localhost:3463/api/auth"
-]
+redirect_urls = [ "https://example.com/api/auth" ]

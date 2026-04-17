@@ -1,6 +1,7 @@
+import React from "react";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
-import { useLoaderData, Form, useSubmit } from "@remix-run/react";
+import { json } from "@remix-run/node";
+import { useLoaderData, useActionData, Form, useSubmit } from "@remix-run/react";
 import {
   Page,
   Card,
@@ -12,6 +13,7 @@ import {
   BlockStack,
   InlineStack,
   useIndexResourceState,
+  Toast,
 } from "@shopify/polaris";
 import { authenticate, prisma } from "../shopify.server";
 import { syncLocatorToMetafield } from "../utils/metafield.server";
@@ -49,12 +51,22 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   }
 
   await syncLocatorToMetafield(session.shop);
-  return redirect("/app/locations");
+  return json({ ok: true, intent: String(intent) });
 };
 
 export default function LocationsIndex() {
   const { locations } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
   const submit = useSubmit();
+  const [toastMsg, setToastMsg] = React.useState("");
+
+  React.useEffect(() => {
+    if (actionData?.ok) {
+      setToastMsg(
+        actionData.intent === "delete" ? "Location deleted" : "Location updated"
+      );
+    }
+  }, [actionData]);
 
   const resourceName = { singular: "location", plural: "locations" };
   const { selectedResources, allResourcesSelected, handleSelectionChange } =
@@ -177,6 +189,9 @@ export default function LocationsIndex() {
           {rowMarkup}
         </IndexTable>
       </Card>
+      {toastMsg && (
+        <Toast content={toastMsg} onDismiss={() => setToastMsg("")} />
+      )}
     </Page>
   );
 }

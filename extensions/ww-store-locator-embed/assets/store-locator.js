@@ -24,6 +24,14 @@
   var apiKey = config.googleMapsApiKey;
   if (!apiKey) {
     console.warn("[ww-store-locator] no google maps API key set");
+    // Show a visible message on any mount points so merchants know what's wrong
+    document.querySelectorAll(".ww-store-locator").forEach(function (m) {
+      m.innerHTML =
+        '<div style="padding:40px 20px;text-align:center;color:#6b7280;font-family:inherit;">' +
+        '<p style="font-size:1rem;font-weight:600;margin:0 0 8px;">Store locator is almost ready</p>' +
+        '<p style="font-size:0.85rem;margin:0;">The store owner needs to add a Google Maps API key in the app settings.</p>' +
+        "</div>";
+    });
     return;
   }
 
@@ -136,6 +144,7 @@
         var radiusLabel = el("span", "wwsl-label");
         radiusLabel.textContent = "Radius";
         var radiusSel = el("select");
+        radiusSel.setAttribute("aria-label", "Search radius");
         [5, 10, 25, 50, 100, 250].forEach(function (r) {
           var o = el("option");
           o.value = String(r);
@@ -165,6 +174,7 @@
           var tagLabel = el("span", "wwsl-label");
           tagLabel.textContent = "Service";
           var tagSel = el("select");
+          tagSel.setAttribute("aria-label", "Filter by service");
           var blank = el("option");
           blank.value = "";
           blank.textContent = "All services";
@@ -342,6 +352,15 @@
     function buildListItem(loc, index) {
       var item = el("li", "wwsl-list-item");
       item.dataset.id = loc.id;
+      item.setAttribute("tabindex", "0");
+      item.setAttribute("role", "button");
+      item.setAttribute("aria-label", "View " + loc.name + " on map");
+      item.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter" || ev.key === " ") {
+          ev.preventDefault();
+          item.click();
+        }
+      });
 
       var h3 = el("h3");
       h3.textContent = index + ". " + loc.name;

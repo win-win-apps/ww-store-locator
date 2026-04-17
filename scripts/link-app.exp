@@ -1,0 +1,40 @@
+#!/usr/bin/expect -f
+# Time based, not state based. Just send keys on a schedule.
+set timeout 600
+log_user 1
+
+set env(COLUMNS) "220"
+set env(LINES) "60"
+set env(TERM) "xterm-256color"
+
+spawn shopify app config link --reset
+
+# Step 1: Yes to "create as new app"
+sleep 5
+send -- "y"
+
+# Step 2: App name (accept default or type a name) - wait for prompt
+sleep 6
+send -- "Store Locator Maps WW\r"
+
+# Step 3: Org selector (one org, accept default)
+sleep 8
+send -- "\r"
+
+# Step 4: Dev store (win-win-ccae-dev should be default or only)
+sleep 8
+send -- "\r"
+
+# Step 5: Config file name
+sleep 8
+send -- "\r"
+
+# Drain remaining output
+expect {
+  -re {client_id\s*=\s*"([a-f0-9]+)"} {
+    puts "\nCAPTURED_CLIENT_ID=$expect_out(1,string)\n"
+    exp_continue
+  }
+  timeout { puts "\nTIMEOUT\n" }
+  eof { puts "\nEOF\n" }
+}

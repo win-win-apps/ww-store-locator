@@ -43,6 +43,8 @@
   max-height: 540px;
   border-right: 1px solid #e5e7eb;
   background: #f9fafb;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
 .wwsl-controls {
@@ -85,6 +87,14 @@
 
 .wwsl-search button:hover {
   opacity: 0.9;
+}
+
+.wwsl-search button:focus-visible,
+.wwsl-search input:focus-visible,
+.wwsl-radius select:focus-visible,
+.wwsl-tags select:focus-visible {
+  outline: 2px solid var(--wwsl-primary, #1f2937);
+  outline-offset: 1px;
 }
 
 .wwsl-filter-row {
@@ -135,6 +145,11 @@
 .wwsl-list-item.wwsl-active {
   border-color: var(--wwsl-primary, #1f2937);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.wwsl-list-item:focus-visible {
+  outline: 2px solid var(--wwsl-primary, #1f2937);
+  outline-offset: 2px;
 }
 
 .wwsl-list-item h3 {

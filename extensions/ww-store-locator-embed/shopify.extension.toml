@@ -3,4 +3,5 @@ api_version = "2025-01"
 [[extensions]]
 name = "Store Locator Map"
 handle = "ww-store-locator-embed"
+uid = "3ad70534-1441-986c-f08c-992ff85727433e55f1bf"
 type = "theme_app_extension"

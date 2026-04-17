@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import { Page } from "@shopify/polaris";
+import { useLoaderData, useActionData } from "@remix-run/react";
+import { Page, Banner } from "@shopify/polaris";
 import { authenticate, prisma } from "../shopify.server";
 import { syncLocatorToMetafield } from "../utils/metafield.server";
 import { geocodeAddress } from "../utils/geocode.server";
@@ -44,6 +44,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     tags: String(form.get("tags") || "[]"),
     isActive: String(form.get("isActive") || "1") === "1",
   };
+
+  if (!fields.name || !fields.addressLine1 || !fields.city) {
+    return json({ error: "Name, address, and city are required" }, { status: 400 });
+  }
 
   const addressChanged =
     fields.addressLine1 !== existing.addressLine1 ||
@@ -88,11 +92,19 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 export default function EditLocation() {
   const { location } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
   return (
     <Page
       title={`Edit: ${location.name}`}
       backAction={{ content: "Locations", url: "/app/locations" }}
     >
+      {actionData?.error && (
+        <div style={{ marginBottom: 16 }}>
+          <Banner tone="critical" title="Error">
+            <p>{actionData.error}</p>
+          </Banner>
+        </div>
+      )}
       <LocationForm mode="edit" initial={location as any} />
     </Page>
   );

@@ -36,13 +36,15 @@ async function shopifyAdminGraphql(
  * Syncs the active locations + global settings for a shop to two
  * AppInstallation metafields:
  *
- *   namespace: "ww_store_locator"
+ *   namespace: "ww_store_locator" (app-data metafield on AppInstallation)
  *     key: "config"    — global settings, includes googleMapsApiKey
  *     key: "locations" — JSON array of active locations
  *
- * The theme app extension reads both via Liquid:
- *   {{ app.metafields.ww_store_locator.config }}
- *   {{ app.metafields.ww_store_locator.locations }}
+ * The theme app extension reads both via Liquid app object:
+ *   app.metafields.ww_store_locator.config
+ *   app.metafields.ww_store_locator.locations
+ *
+ * No $app prefix needed since AppInstallation provides namespace isolation.
  *
  * IMPORTANT: fails silently. Config sync must never block a save redirect.
  */

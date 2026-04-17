@@ -15,10 +15,10 @@
   map script, and engine auto-loaded by this app embed.
 {% endcomment %}
 
-{% assign config_raw = app.metafields.ww_store_locator.config %}
-{% assign config = config_raw.value %}
-{% assign locations_raw = app.metafields.ww_store_locator.locations %}
-{% assign locations = locations_raw.value %}
+{%- assign config_raw = app.metafields.ww_store_locator.config -%}
+{%- assign config = config_raw.value -%}
+{%- assign locations_raw = app.metafields.ww_store_locator.locations -%}
+{%- assign locations = locations_raw.value -%}
 
 {% if config != blank %}
 <script>

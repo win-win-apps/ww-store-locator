@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
-import { useLoaderData, Form } from "@remix-run/react";
-import { useState } from "react";
+import { json } from "@remix-run/node";
+import { useLoaderData, useActionData, Form } from "@remix-run/react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Page,
   Layout,
@@ -16,6 +16,8 @@ import {
   Banner,
   Text,
   List,
+  Toast,
+  Frame,
 } from "@shopify/polaris";
 import { authenticate, prisma } from "../shopify.server";
 import { syncLocatorToMetafield } from "../utils/metafield.server";
@@ -63,11 +65,18 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   });
 
   await syncLocatorToMetafield(session.shop);
-  return redirect("/app/settings");
+  return json({ ok: true });
 };
 
 export default function SettingsPage() {
   const { settings } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+  const [toastActive, setToastActive] = useState(false);
+  const dismissToast = useCallback(() => setToastActive(false), []);
+
+  useEffect(() => {
+    if (actionData?.ok) setToastActive(true);
+  }, [actionData]);
 
   const [pageTitle, setPageTitle] = useState(settings.pageTitle);
   const [introText, setIntroText] = useState(settings.introText || "");
@@ -360,6 +369,9 @@ export default function SettingsPage() {
           </Layout.Section>
         </Layout>
       </Form>
+      {toastActive && (
+        <Toast content="Settings saved" onDismiss={dismissToast} />
+      )}
     </Page>
   );
 }
